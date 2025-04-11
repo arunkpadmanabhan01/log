@@ -10,7 +10,7 @@ const LandingPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const existingFile = localStorage.getItem('uploadedFile');
+    const existingFile = sessionStorage.getItem('uploadedFile');
     if (existingFile) {
       setUploadedFile(existingFile);
     }
@@ -33,8 +33,8 @@ const LandingPage = () => {
       const data = await response.json();
       if (response.ok) {
         setUploadedFile(file.name);
-        localStorage.setItem('selectedLogFile', file.name);  // Updated to match other components
-        localStorage.setItem('uploadedFile', file.name);
+        sessionStorage.setItem('selectedLogFile', file.name);
+        sessionStorage.setItem('uploadedFile', file.name);
         navigate('/parsing');
       } else {
         setError(data.error || 'Failed to upload file');

@@ -17,13 +17,13 @@ const FilteringPage = () => {
   });
 
   useEffect(() => {
-    const logFile = localStorage.getItem('selectedLogFile');
+    const logFile = sessionStorage.getItem('selectedLogFile');
     if (!logFile) {
       navigate('/');
       return;
     }
     fetchLogs();
-  }, [filters, navigate]); // Added navigate as dependency
+  }, [navigate]);
 
   const fetchLogs = async () => {
     try {

@@ -18,7 +18,7 @@ const AnalyticsPage = () => {
   const COLORS = ['#3b82f6', '#4fd1c5', '#f43f5e', '#f59e0b', '#8b5cf6'];
 
   useEffect(() => {
-    const logFile = localStorage.getItem('selectedLogFile');
+    const logFile = sessionStorage.getItem('selectedLogFile');
     if (!logFile) {
       navigate('/');
       return;
@@ -92,6 +92,9 @@ const AnalyticsPage = () => {
       <Navigation />
       <div className="content">
         <h1>Visual Analytics</h1>
+        <p className="subtitle">
+          Analytics for: {sessionStorage.getItem('selectedLogFile')}
+        </p>
         <p className="subtitle">Visualize your log data through interactive charts</p>
 
         {loading ? (

@@ -12,7 +12,7 @@ const ParsingPage = () => {
   const [stats, setStats] = useState({ total: 0, levels: {} });
 
   useEffect(() => {
-    const logFile = localStorage.getItem('selectedLogFile');
+    const logFile = sessionStorage.getItem('selectedLogFile');
     if (!logFile) {
       navigate('/');
       return;
@@ -100,7 +100,7 @@ const ParsingPage = () => {
             <div>
               <h1>Smart Parsing</h1>
               <p className="subtitle">
-                Analyzing: {localStorage.getItem('selectedLogFile')}
+                Analyzing: {sessionStorage.getItem('selectedLogFile')}
               </p>
             </div>
           </div>
