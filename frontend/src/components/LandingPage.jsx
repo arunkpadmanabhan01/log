@@ -26,15 +26,15 @@ const LandingPage = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/upload', {
+      const response = await fetch('http://localhost:5001/api/upload', {  // Updated port to 5001
         method: 'POST',
         body: formData,
       });
       const data = await response.json();
       if (response.ok) {
         setUploadedFile(file.name);
+        localStorage.setItem('selectedLogFile', file.name);  // Updated to match other components
         localStorage.setItem('uploadedFile', file.name);
-        // Automatically navigate to parsing page after successful upload
         navigate('/parsing');
       } else {
         setError(data.error || 'Failed to upload file');

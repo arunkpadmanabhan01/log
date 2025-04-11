@@ -5,15 +5,16 @@ import { Filter, ArrowLeft, Search, Clock } from 'lucide-react';
 import './FilteringPage.css';
 
 const FilteringPage = () => {
+  const navigate = useNavigate();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     level: 'all',
     search: '',
     startDate: '',
     endDate: ''
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     const logFile = localStorage.getItem('selectedLogFile');
@@ -22,32 +23,35 @@ const FilteringPage = () => {
       return;
     }
     fetchLogs();
-  }, [navigate]);
+  }, [filters, navigate]); // Added navigate as dependency
 
   const fetchLogs = async () => {
     try {
+      setLoading(true);
       const queryParams = new URLSearchParams({
-        ...filters,
-        level: filters.level === 'all' ? '' : filters.level
+        level: filters.level === 'all' ? '' : filters.level,
+        search: filters.search,
+        start_time: filters.startDate,
+        end_time: filters.endDate
       }).toString();
       
-      const response = await fetch(`http://localhost:5000/api/logs?${queryParams}`);
+      const response = await fetch(`http://localhost:5001/api/logs?${queryParams}`);
       const data = await response.json();
+      
       if (response.ok) {
         setLogs(data.logs);
+        setError(null);
       } else {
-        console.error('Error fetching logs:', data.error);
+        setError(data.error || 'Failed to fetch logs');
+        setLogs([]);
       }
     } catch (error) {
-      console.error('Error fetching logs:', error);
+      setError('Error connecting to server');
+      setLogs([]);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchLogs();
-  }, [filters]);
 
   const handleFilterChange = (name, value) => {
     setFilters(prev => ({ ...prev, [name]: value }));

@@ -1,51 +1,231 @@
 .parsing-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #1a1e2c 0%, #283447 100%);
+  color: white;
 }
 
 .content {
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
 .header {
+  background: rgb(51,51,64);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
 }
 
-h1 {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.header-icon {
+  color: #1890ff;
+  font-size: 24px;
 }
 
 .subtitle {
   color: #666;
+  margin-top: 0.5rem;
+}
+
+.stats-container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  align-items: center;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #1b1e21;
+  border-radius: 6px;
+}
+
+.stat-icon {
+  color: #1890ff;
+}
+
+.stat-content h3 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  color: #666;
 }
 
-.log-count {
-  color: #2c3e50;
-  font-weight: 500;
+.stat-content p {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1890ff;
 }
 
-.loading {
+.level-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.level-stat {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 2px solid;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+}
+
+.level-name {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.level-count {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.logs-table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Update table alignment */
+/* Update table column spacing */
+.logs-table {
+  background-color: #32313b;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* Add vertical spacing between rows */
+  table-layout: fixed;
+}
+
+/* Update table header and cell alignment */
+.logs-table th,
+.logs-table td {
+  padding: 0.75rem 3rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.logs-table th:first-child,
+.logs-table td:first-child {
+  width: 240px;
+  padding-left: 3rem;
+}
+
+.logs-table th:nth-child(2),
+.logs-table td:nth-child(2) {
+  width: 140px;
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+.logs-table th:last-child,
+.logs-table td:last-child {
+  padding-left: 3rem;
+  padding-right: 3rem;
+  text-align: left;
+  width: calc(100% - 380px); /* Subtracting the width of first two columns */
+}
+
+.message {
+  font-family: monospace;
+  color: #cbd5e1;
+  word-break: break-word;
+  text-align: left;
+}
+
+/* Update table header alignment */
+.logs-table th {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 3rem;
+  text-align: left;
+  font-weight: 600;
+  color: #60a5fa;
+}
+
+.logs-table th:first-child {
+  width: 240px;
+  padding-left: 3rem;
+}
+
+.logs-table th:nth-child(2) {
+  width: 140px;
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+.logs-table th:last-child {
+  width: auto;
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+/* Remove duplicate padding definitions */
+.logs-table td {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timestamp {
+  white-space: nowrap;
+  color: #666;
+  font-family: monospace;
+}
+
+/* Update level badge styling */
+.level-badge {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* Level-specific colors */
+.level-badge[data-level="ERROR"] {
+  color: #ff4d4f;
+}
+
+.level-badge[data-level="WARNING"] {
+  color: #faad14;
+}
+
+.level-badge[data-level="INFO"] {
+  color: #1890ff;
+}
+
+.level-badge[data-level="DEBUG"] {
+  color: #52c41a;
+}
+
+.message {
+  font-family: monospace;
+  color: #333;
+}
+
+.loading-container {
+  text-align: center;
   padding: 3rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1890ff;
+  border-radius: 50%;
   width: 40px;
   height: 40px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #3498db;
-  border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
+  margin: 0 auto 1rem;
 }
 
 @keyframes spin {
@@ -53,17 +233,7 @@ h1 {
   100% { transform: rotate(360deg); }
 }
 
-.error-message {
-  background-color: #fee2e2;
-  border: 1px solid #ef4444;
-  color: #b91c1c;
-  padding: 1rem;
-  border-radius: 8px;
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.no-logs {
+.error-container, .empty-state {
   text-align: center;
   padding: 3rem;
   background: white;
@@ -71,88 +241,22 @@ h1 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.error-icon {
+  color: #ff4d4f;
+  margin-bottom: 1rem;
+}
+
 .retry-button {
-  background-color: #3498db;
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  background: #1890ff;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
   border-radius: 4px;
-  font-size: 1rem;
   cursor: pointer;
-  margin-top: 1rem;
-  transition: background-color 0.2s;
+  font-size: 1rem;
 }
 
 .retry-button:hover {
-  background-color: #2980b9;
-}
-
-.logs-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.logs-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.logs-table th {
-  background-color: #f8f9fa;
-  padding: 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #eee;
-}
-
-.logs-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #eee;
-}
-
-.log-entry:hover {
-  background-color: #f8f9fa;
-}
-
-.timestamp {
-  color: #666;
-  white-space: nowrap;
-  font-family: monospace;
-}
-
-.level-badge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-transform: uppercase;
-}
-
-.level-badge.info {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.level-badge.warn {
-  background-color: #fff3e0;
-  color: #f57c00;
-}
-
-.level-badge.error {
-  background-color: #ffebee;
-  color: #d32f2f;
-}
-
-.level-badge.debug {
-  background-color: #e8f5e9;
-  color: #388e3c;
-}
-
-.message {
-  font-family: monospace;
-  word-break: break-word;
+  background: #096dd9;
 }

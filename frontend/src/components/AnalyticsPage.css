@@ -41,20 +41,63 @@ h1 {
 
 .charts {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .charts {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  margin-bottom: 2rem;
+  align-items: start;  /* Add this to align charts at the top */
 }
 
 .chart-container {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
   padding: 1.5rem;
+  margin-bottom: 0;  /* Remove bottom margin */
+  height: 100%;  /* Ensure consistent height */
+}
+
+.custom-tooltip {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.tooltip-label {
+  color: #ffffff;
+  margin: 0;
+  font-weight: bold;
+}
+
+.tooltip-value {
+  color: #60a5fa;
+  margin: 4px 0 0;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fee2e2;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+/* Update existing styles */
+.recharts-text {
+  fill: #ffffff !important;
+  font-size: 12px;
+}
+
+.recharts-legend-item-text {
+  color: #ffffff !important;
+}
+
+.recharts-cartesian-axis-line {
+  stroke: rgba(255, 255, 255, 0.2) !important;
+}
+
+.recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.1) !important;
 }
 
 .chart-container h3 {
@@ -84,13 +127,4 @@ h1 {
 
 .recharts-tooltip-item {
   color: #e2e8f0 !important;
-}
-
-.recharts-text {
-  fill: #cbd5e1 !important;
-}
-
-.recharts-cartesian-grid-horizontal line,
-.recharts-cartesian-grid-vertical line {
-  stroke: rgba(255, 255, 255, 0.1) !important;
 }

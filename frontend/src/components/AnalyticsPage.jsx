@@ -1,43 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useNavigate } from 'react-router-dom';
+import {
+  PieChart, Pie, Cell,
+  BarChart, Bar, XAxis, YAxis,
+  Tooltip, Legend, ResponsiveContainer, CartesianGrid
+} from 'recharts';
 import Navigation from './Navigation';
 import './AnalyticsPage.css';
 
 const AnalyticsPage = () => {
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [levelData, setLevelData] = useState([]);
   const [timeData, setTimeData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const COLORS = ['#3b82f6', '#4fd1c5', '#f43f5e', '#f59e0b', '#8b5cf6'];
 
   useEffect(() => {
+    const logFile = localStorage.getItem('selectedLogFile');
+    if (!logFile) {
+      navigate('/');
+      return;
+    }
     fetchAnalytics();
-  }, []);
+  }, [navigate]);
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/metrics');
+      setLoading(true);
+      const response = await fetch('http://localhost:5001/api/metrics');
+      if (!response.ok) {
+        throw new Error('Failed to fetch analytics data');
+      }
       const data = await response.json();
-      
-      // Transform level data for pie chart
-      const levelCounts = data.level_distribution;
+      console.log('Raw API response:', data);
+
+      // Pie chart data (log levels)
+      const levelCounts = data.level_distribution || {};
       const levelChartData = Object.entries(levelCounts).map(([level, count]) => ({
         name: level.toUpperCase(),
         value: count,
       }));
       setLevelData(levelChartData);
 
-      // Transform time data for bar chart
-      const timeCounts = data.time_distribution;
-      const timeChartData = Object.entries(timeCounts).map(([time, count]) => ({
-        time: time,
-        count: count,
-      }));
-      setTimeData(timeChartData);
+      // Bar chart data (logs per timestamp group)
+      const timeCounts = data.time_distribution || {};
+      const timeChartData = Object.entries(timeCounts)
+        .map(([timestamp, count]) => ({
+          time: timestamp, // full "YYYY-MM-DD HH:MM"
+          count: count
+        }))
+        .sort((a, b) => new Date(a.time) - new Date(b.time)); // sort by timestamp
 
-      setLoading(false);
+      console.log('Processed time data:', timeChartData);
+      setTimeData(timeChartData);
+      setError(null);
     } catch (error) {
       console.error('Error fetching analytics:', error);
+      setError('Failed to load analytics data');
+    } finally {
       setLoading(false);
     }
   };
@@ -46,12 +68,24 @@ const AnalyticsPage = () => {
     if (active && payload && payload.length) {
       return (
         <div className="custom-tooltip">
-          <p>{`${label}: ${payload[0].value} logs`}</p>
+          <p className="tooltip-label">{label}</p>
+          <p className="tooltip-value">Count: {payload[0].value}</p>
         </div>
       );
     }
     return null;
   };
+
+  if (error) {
+    return (
+      <div className="analytics-page">
+        <Navigation />
+        <div className="content">
+          <div className="error-message">{error}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="analytics-page">
@@ -66,9 +100,10 @@ const AnalyticsPage = () => {
           <div className="no-data">No log data available for analysis</div>
         ) : (
           <div className="charts">
+            {/* Pie Chart */}
             <div className="chart-container">
               <h3>Log Level Distribution</h3>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={400}>
                 <PieChart>
                   <Pie
                     data={levelData}
@@ -89,26 +124,46 @@ const AnalyticsPage = () => {
               </ResponsiveContainer>
             </div>
 
+            {/* Bar Chart */}
             <div className="chart-container">
-              <h3>Log Count Over Time</h3>
-              <ResponsiveContainer width="100%" height={300}>
+              <h3>Logs Per Minute</h3>
+              <ResponsiveContainer width="100%" height={400}>
                 <BarChart
                   data={timeData}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                 >
-                  <XAxis type="number" label={{ value: 'Number of Logs', position: 'bottom' }} />
-                  <YAxis 
-                    dataKey="time" 
-                    type="category"
-                    label={{ value: 'Time Period', angle: -90, position: 'left' }}
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="time"
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                      });
+                    }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                    interval={0}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis
+                    label={{
+                      value: 'Number of Logs',
+                      angle: -90,
+                      position: 'insideLeft',
+                      style: { fill: '#fff' }
+                    }}
+                    allowDecimals={false}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar
                     dataKey="count"
-                    fill="#3b82f6"
                     name="Log Count"
-                    label={{ position: 'right' }}
+                    fill="#82ca9d"
+                    radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
               </ResponsiveContainer>
