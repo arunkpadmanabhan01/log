@@ -11,7 +11,7 @@ A full-stack web application for analyzing log files with filtering and visualiz
   - Keyword search
 - Visualizations:
   - Pie chart showing log level distribution
-  - Bar chart showing logs per hour
+  - Bar chart showing logs per minute
 - Real-time filtering and updates
 - Modern, responsive UI using Material-UI
 
@@ -21,7 +21,7 @@ A full-stack web application for analyzing log files with filtering and visualiz
   - React (Vite)
   - Material-UI
   - Recharts for visualization
-  - Axios for API calls
+  - RESTapi for api fetch
 - Backend:
   - Flask
   - Pandas for data processing
