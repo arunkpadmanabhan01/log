@@ -16,28 +16,51 @@ const FilteringPage = () => {
     endDate: ''
   });
 
+  // ✅ Handle filter changes
+  const handleFilterChange = (field, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Check for valid session file
   useEffect(() => {
     const logFile = sessionStorage.getItem('selectedLogFile');
     if (!logFile) {
       navigate('/');
       return;
     }
-    fetchLogs();
-  }, [navigate]);
+    fetchLogs(); // initial fetch
+  }, []);
+
+  // Apply filters with debounce
+  useEffect(() => {
+    const debounceTimeout = setTimeout(() => {
+      fetchLogs();
+    }, 500);
+    return () => clearTimeout(debounceTimeout);
+  }, [filters]);
 
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      const queryParams = new URLSearchParams({
-        level: filters.level === 'all' ? '' : filters.level,
-        search: filters.search,
-        start_time: filters.startDate,
-        end_time: filters.endDate
-      }).toString();
-      
-      const response = await fetch(`http://localhost:5001/api/logs?${queryParams}`);
+      let url = 'http://localhost:5001/api/logs';
+
+      const params = new URLSearchParams();
+      if (filters.level !== 'all') params.append('level', filters.level);
+      if (filters.search.trim()) params.append('search', filters.search.trim());
+      if (filters.startDate) params.append('start_time', new Date(filters.startDate).toISOString());
+      if (filters.endDate) params.append('end_time', new Date(filters.endDate).toISOString());
+
+      const query = params.toString();
+      if (query) {
+        url += `?${query}`;
+      }
+
+      const response = await fetch(url);
       const data = await response.json();
-      
+
       if (response.ok) {
         setLogs(data.logs);
         setError(null);
@@ -53,16 +76,12 @@ const FilteringPage = () => {
     }
   };
 
-  const handleFilterChange = (name, value) => {
-    setFilters(prev => ({ ...prev, [name]: value }));
-  };
-
   return (
     <div className="filtering-page">
       <Navigation />
       <div className="content">
         <h1>Advanced Filtering</h1>
-        <p className="subtitle">Analyzing: {localStorage.getItem('selectedLogFile')}</p>
+        <p className="subtitle">Analyzing: {sessionStorage.getItem('selectedLogFile')}</p>
 
         <div className="filters">
           <div className="filters-header">
@@ -90,7 +109,7 @@ const FilteringPage = () => {
               >
                 <option value="all">All Levels</option>
                 <option value="INFO">INFO</option>
-                <option value="WARNING">WARNING</option>
+                <option value="WARN">WARN</option>
                 <option value="ERROR">ERROR</option>
                 <option value="DEBUG">DEBUG</option>
               </select>
@@ -122,26 +141,30 @@ const FilteringPage = () => {
         ) : (
           <div className="logs-container">
             <h3>Filtered Logs</h3>
-            <div className="log-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Timestamp</th>
-                    <th>Level</th>
-                    <th>Message</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {logs.map((log, index) => (
-                    <tr key={index}>
-                      <td>{log.timestamp}</td>
-                      <td className={`level-${log.level.toLowerCase()}`}>{log.level}</td>
-                      <td>{log.message}</td>
+            {logs.length === 0 ? (
+              <p>No logs match the current filters.</p>
+            ) : (
+              <div className="log-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Timestamp</th>
+                      <th>Level</th>
+                      <th>Message</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {logs.map((log, index) => (
+                      <tr key={index}>
+                        <td>{log.timestamp}</td>
+                        <td className={`level-${log.level.toLowerCase()}`}>{log.level}</td>
+                        <td>{log.message}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
       </div>
